@@ -2,94 +2,41 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
-  Put,
-  Delete,
   Param,
   Query,
   Body,
   ParseIntPipe,
-  Headers,
-  Ip,
-} from '@nestjs/common';
-
-@Controller('users')
-export class UsersController {
-  @Get('/:id{/:optional}')
-  public getUsers(
-    @Param('id', ParseIntPipe) id: number | undefined,
-    @Param('optional') optional?: number,
-    @Query('limit', ParseIntPipe) limit?: number,
-    @Query('offset', ParseIntPipe) offset?: number,
-  ) {
-    console.log(typeof id);
-    console.log(typeof limit);
-    console.log(typeof optional);
-    console.log(typeof limit);
-    console.log(typeof offset);
-    if (optional) {
-      return `ID is ${id} and optional parameter is ${optional}`;
-    } else {
-      return `ID is ${id} and no optional parameter`;
-    }
-  }
-
-  @Post()
-  public createUsers(
-    @Headers() headers: any,
-    @Body() request: any,
-    @Ip() ip: any,
-  ) {
-    console.log(request);
-    console.log(headers);
-    console.log(ip);
-
-    return 'You sent a post request to users endpoint';
-  }
-}
-
-// Get specific parameters from URL
-/**
- * 
- * import {
-  Controller,
-  Get,
-  Post,
+  DefaultValuePipe,
   Patch,
-  Put,
-  Delete,
-  Param,
-  Query,
-  Body,
-  ParseIntPipe,
 } from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { GetUsersParamDto } from './dtos/get-users-param.dto';
+import { PatchUserDto } from './dtos/patch-user.dto';
 
 @Controller('users')
 export class UsersController {
-  @Get('/:id{/:optional}')
+  @Get('{/:id}')
   public getUsers(
-    @Param('id', ParseIntPipe) id: number | undefined,
-    @Param('optional') optional?: number,
-    @Query('limit', ParseIntPipe) limit?: number,
-    @Query('offset', ParseIntPipe) offset?: number,
+    @Param() getUserParamDto: GetUsersParamDto,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
   ) {
-    console.log(typeof id);
-    console.log(typeof limit);
-    console.log(typeof optional);
-    console.log(typeof limit);
-    console.log(typeof offset);
-    if (optional) {
-      return `ID is ${id} and optional parameter is ${optional}`;
-    } else {
-      return `ID is ${id} and no optional parameter`;
-    }
+    console.log(getUserParamDto);
+
+    return `ID is ${getUserParamDto.id} and limit is ${limit} and page is ${page}`;
   }
 
   @Post()
-  public createUsers(@Body() request: any) {
-    console.log(request);
+  public createUsers(@Body() createUserDto: CreateUserDto) {
+    console.log(createUserDto instanceof CreateUserDto);
 
     return 'You sent a post request to users endpoint';
   }
+
+  @Patch()
+  public patchUser(@Body() patchUserDto: PatchUserDto) {
+    console.log(patchUserDto);
+
+    return patchUserDto;
+  }
 }
-*/
