@@ -36,10 +36,24 @@ export default [
       '@typescript-eslint/no-unsafe-argument': 'warn',
 
       // spacing niceties
-      'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
+      'lines-between-class-members': [
+        'error',
+        'always',
+        { exceptAfterSingleLine: true },
+      ],
       'padding-line-between-statements': [
         'error',
         { blankLine: 'always', prev: '*', next: 'return' },
+      ],
+      // show as yellow warnings instead of errors
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
       ],
     },
   },
