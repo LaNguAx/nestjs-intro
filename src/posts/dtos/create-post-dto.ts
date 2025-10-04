@@ -73,7 +73,6 @@ export class CreatePostDto {
   @IsString()
   @IsOptional()
   @MinLength(3)
-  @MaxLength(255)
   content?: string;
 
   @ApiPropertyOptional({
@@ -91,6 +90,7 @@ export class CreatePostDto {
   })
   @IsOptional()
   @IsUrl()
+  @MaxLength(1024)
   featuredImageUrl?: string;
 
   @ApiPropertyOptional({
