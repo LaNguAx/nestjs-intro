@@ -1,7 +1,17 @@
-import { Column, Entity } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToOne,
+  JoinTable,
+} from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm';
 import { PostTypeEnum } from './enums/post-type.enum';
 import { PostStatusEnum } from './enums/post-status.enum';
+import { MetaOption } from 'src/meta-options/meta-option.entity';
+import { User } from 'src/users/user.entity';
+import { Tag } from 'src/tags/tag.entity';
 
 @Entity({ name: 'posts' })
 export class Post {
@@ -49,7 +59,7 @@ export class Post {
     type: 'jsonb',
     nullable: true,
   })
-  schema?: string;
+  schema?: Record<string, any>;
 
   @Column({
     type: 'varchar',
@@ -64,16 +74,30 @@ export class Post {
   })
   publishOn?: Date;
 
-  // Work on these in lectures on relationships.
-  // @Column({
-  //   type: 'simple-array',
-  //   nullable: true,
-  // })
-  // tags?: string[];
+  @OneToOne(() => MetaOption, (metaOption) => metaOption.post, {
+    cascade: true,
+    eager: true,
+  })
+  metaOptions?: MetaOption;
 
-  // @Column({
-  //   type: 'simple-json',
-  //   nullable: true,
-  // })
-  // metaOptions?: { key: string; value: any }[];
+  @ManyToOne(() => User, (user) => user.post, {
+    eager: true,
+  })
+  author: User;
+
+  @ManyToMany(() => Tag, (tag) => tag.posts, {
+    eager: true,
+  })
+  @JoinTable({
+    name: 'posts_tags_m2m',
+    joinColumn: {
+      name: 'postId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tagId',
+      referencedColumnName: 'id',
+    },
+  })
+  tags?: Tag[];
 }

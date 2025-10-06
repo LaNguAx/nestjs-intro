@@ -1,0 +1,9 @@
+POST http://localhost:3000/tags
+Content-Type: application/json
+
+{
+  "name": "typescript",
+  "slug": "typescript",
+  "description": "This is the test tag's description"
+}
+

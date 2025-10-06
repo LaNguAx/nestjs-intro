@@ -3,9 +3,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Post } from 'src/posts/post.entity';
 
 @Entity({ name: 'tags' })
 export class Tag {
@@ -38,7 +40,7 @@ export class Tag {
     type: 'jsonb',
     nullable: true,
   })
-  schema?: string;
+  schema?: Record<string, any>;
 
   @Column({
     type: 'varchar',
@@ -56,4 +58,9 @@ export class Tag {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @ManyToMany(() => Post, (post) => post.tags, {
+    onDelete: 'CASCADE',
+  })
+  posts: Post[];
 }

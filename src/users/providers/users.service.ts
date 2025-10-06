@@ -59,10 +59,7 @@ export class UsersService {
     _limit: number,
     _page: number,
   ) {
-    console.log(getUserParamDto);
     const isAuth = this.authService.isAuth();
-
-    console.log(isAuth);
 
     return [
       {
@@ -79,13 +76,10 @@ export class UsersService {
   /**
    * Retrieve a single user by their unique identifier.
    *
-   * @param _id The unique identifier of the user.
+   * @param id The unique identifier of the user.
    * @returns A lightweight user object if found.
    */
-  public findOneById(_id: string) {
-    return {
-      firstName: 'Alice',
-      email: 'alice@doe.com',
-    };
+  public async findOneById(id: number) {
+    return await this.usersRepository.findOneBy({ id });
   }
 }

@@ -1,7 +1,7 @@
 {
   "singleQuote": true,
   "trailingComma": "all",
-  "endOfLine": "lf",
+  "endOfLine": "auto",
   "semi": true,
   "printWidth": 80,
   "tabWidth": 2,
@@ -13,4 +13,3 @@
   "proseWrap": "preserve",
   "htmlWhitespaceSensitivity": "css"
 }
-
