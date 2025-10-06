@@ -4,17 +4,18 @@ Content-Type: application/json
 {
   "title": "What's new with NestJS?",
   "postType": "post",
-  "slug": "new-with-nestjs",
+  "slug": "new-with-nestjs55667765gfafsfffff555",
   "status": "draft",
   "content": "This is the test post's content",
-  "schema": "{\n \"@context\": \"https://schema.org\",\n \"@type\": \"Person\"\n}",
+  "schema": { "@context": "https://schema.org", "@type": "Person" },
   "featuredImageUrl": "http://localhost.com/images/image1.jpg",
   "publishOn": "2025-10-03T11:45:36.124Z",
   "tags": ["nestjs", "typescript"],
-  "metaOptions": [
-    {
-      "key": "testKey",
-      "value": 20
+  "metaOptions": {
+    "metaValue": {
+      "sidebarEnabled": false
     }
-  ]
+  },
+  "authorId": 1,
+  "tags": [1,4]
 }  

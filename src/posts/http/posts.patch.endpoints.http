@@ -1,0 +1,9 @@
+PATCH http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "id": 39,
+  "title": "NestJs with typescript",
+  "postType": "post",
+  "tags": [4]
+}

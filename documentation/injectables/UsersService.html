@@ -171,6 +171,7 @@
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#findOneById" >findOneById</a>
                             </li>
                         </ul>
@@ -454,6 +455,7 @@
                     <a name="findOneById"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
                         <span ><b>findOneById</b></span>
                         <a href="#findOneById"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -462,15 +464,15 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>findOneById(_id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>findOneById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="85"
-                                    class="link-to-prism">src/users/providers/users.service.ts:85</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="82"
+                                    class="link-to-prism">src/users/providers/users.service.ts:82</a></div>
                         </td>
                     </tr>
 
@@ -494,9 +496,9 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>_id</td>
+                                                <td>id</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
                                             </td>
 
                                             <td>
@@ -513,7 +515,7 @@
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>{ firstName: string; email: string; }</code>
+                            <b>Returns : </b>    <code>unknown</code>
 
                         </div>
                             <div class="io-description">
@@ -591,10 +593,7 @@ export class UsersService {
     _limit: number,
     _page: number,
   ) {
-    console.log(getUserParamDto);
     const isAuth &#x3D; this.authService.isAuth();
-
-    console.log(isAuth);
 
     return [
       {
@@ -611,14 +610,11 @@ export class UsersService {
   /**
    * Retrieve a single user by their unique identifier.
    *
-   * @param _id The unique identifier of the user.
+   * @param id The unique identifier of the user.
    * @returns A lightweight user object if found.
    */
-  public findOneById(_id: string) {
-    return {
-      firstName: &#x27;Alice&#x27;,
-      email: &#x27;alice@doe.com&#x27;,
-    };
+  public async findOneById(id: number) {
+    return await this.usersRepository.findOneBy({ id });
   }
 }
 </code></pre>

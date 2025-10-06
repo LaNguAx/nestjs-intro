@@ -2,7 +2,6 @@ import {
   IsArray,
   IsDateString,
   IsEnum,
-  IsJSON,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -11,10 +10,12 @@ import {
   MaxLength,
   MinLength,
   ValidateNested,
+  IsObject,
+  IsInt,
 } from 'class-validator';
 import { PostTypeEnum } from '../enums/post-type.enum';
 import { PostStatusEnum } from '../enums/post-status.enum';
-import { CreatePostMetaOptionsDto } from './create-post-meta-options.dto';
+import { CreatePostMetaOptionsDto } from '../../meta-options/dtos/create-post-meta-options.dto';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -78,71 +79,53 @@ export class CreatePostDto {
   @ApiPropertyOptional({
     description:
       'Serialize your JSON object else a validation error will be thrown',
-    example: '{"@context": "https://schema.org", "@type": "Person"}',
+    example: { '@context': 'https://schema.org', '@type': 'Person' },
   })
   @IsOptional()
-  @IsJSON()
-  schema?: string;
+  @IsObject()
+  schema?: Record<string, any>;
 
-  @ApiPropertyOptional({
-    description: 'The featured image URL of the post',
-    example: 'http://localhost.com/images/image1.jpg',
-  })
-  @IsOptional()
+  @ApiPropertyOptional()
   @IsUrl()
+  @IsOptional()
   @MaxLength(1024)
   featuredImageUrl?: string;
 
-  @ApiPropertyOptional({
-    description: 'The date on which the blog post was published',
-    example: '2025-10-03T11:45:36.124Z',
-  })
+  @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
+  // optionally: @Type(() => Date) if you want auto Date conversion
   publishOn?: Date;
 
   @ApiPropertyOptional({
-    description: 'The tags of the post',
-    example: ['nestjs', 'typescript'],
+    description: 'Array of Ids of tags',
+    example: [1, 2],
   })
   @IsArray()
   @IsOptional()
-  @IsString({ each: true })
-  @MinLength(3, { each: true })
-  @MaxLength(255, { each: true })
-  tags?: string[];
+  @IsInt({ each: true })
+  tags?: number[];
 
   @ApiPropertyOptional({
-    type: 'array',
-    required: false,
+    type: CreatePostMetaOptionsDto,
     description: 'The meta options of the post',
-    example: [
-      {
-        key: 'testKey',
-        value: 20,
-      },
-    ],
-    items: {
-      type: 'object',
-      properties: {
-        key: {
-          type: 'string',
-          description:
-            'The key can be any string identifier for your meta option',
-          example: 'sidebarEnabled',
-        },
-        value: {
-          type: 'any',
-          description:
-            'The value can be any value you want to store for your meta option',
-          example: true,
-        },
+    example: {
+      metaValue: {
+        sidebarEnabled: true,
       },
     },
   })
   @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
+  @ValidateNested()
   @Type(() => CreatePostMetaOptionsDto)
-  metaOptions: CreatePostMetaOptionsDto[];
+  metaOptions?: CreatePostMetaOptionsDto;
+
+  @ApiProperty({
+    description: 'The author ID of the post',
+    type: 'integer',
+    example: 1,
+  })
+  @IsInt()
+  @IsNotEmpty()
+  authorId: number;
 }
