@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   forwardRef,
   HttpException,
@@ -17,8 +16,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import type { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
-import { STATUS_CODES } from 'http';
-import { error } from 'console';
+import { UsersCreateManyProvider } from './users-create-many.provider';
+import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
 
 /**
  * Service to connect to the Users data source and perform business operations.
@@ -39,6 +38,11 @@ export class UsersService {
     private readonly authService: AuthService,
     @Inject(profileConfig.KEY)
     private readonly profileConfiguration: ConfigType<typeof profileConfig>,
+
+    /**
+     * Inject UsersCreateManyProvider
+     */
+    private readonly usersCreateManyProvider: UsersCreateManyProvider,
   ) {}
 
   /**
@@ -148,5 +152,9 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  public async createMany(createManyUsersDto: CreateManyUsersDto) {
+    return await this.usersCreateManyProvider.createMany(createManyUsersDto);
   }
 }
