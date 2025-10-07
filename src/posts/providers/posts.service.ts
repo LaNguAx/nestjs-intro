@@ -5,7 +5,7 @@ import {
   RequestTimeoutException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post as PostEntity } from '../post.entity';
 import { CreatePostDto } from '../dtos/create-post-dto';
@@ -13,6 +13,9 @@ import { MetaOptionsService } from 'src/meta-options/providers/meta-options.serv
 import { TagsService } from 'src/tags/providers/tags.service';
 import { Tag } from 'src/tags/tag.entity';
 import { PatchPostDto } from '../dtos/patch-post-dto';
+import { GetPostsDto } from '../dtos/get-posts.dto';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
 
 @Injectable()
 export class PostsService {
@@ -22,6 +25,7 @@ export class PostsService {
     private readonly usersService: UsersService,
     private readonly metaOptionsService: MetaOptionsService,
     private readonly tagsService: TagsService,
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
   public async create(createPostDto: CreatePostDto): Promise<PostEntity> {
@@ -49,13 +53,17 @@ export class PostsService {
     return this.postsRepository.save(post);
   }
 
-  public findAll(userId: string) {
+  public async findAll(
+    postQuery: GetPostsDto,
+    userId: string,
+  ): Promise<Paginated<PostEntity>> {
     // Users Service
     // Find a User
 
-    const posts = this.postsRepository.find({
-      relations: ['metaOptions'],
-    });
+    const posts = await this.paginationProvider.paginateQuery(
+      { limit: postQuery.limit, page: postQuery.page },
+      this.postsRepository,
+    );
 
     return posts;
   }
