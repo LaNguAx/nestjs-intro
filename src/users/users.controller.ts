@@ -14,6 +14,7 @@ import { GetUsersParamDto } from './dtos/get-users-param.dto';
 import { PatchUserDto } from './dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { WebSocketGateway } from '@nestjs/websockets';
 
 @Controller('users')
 @ApiTags('Users')
@@ -57,7 +58,6 @@ export class UsersController {
 
   @Patch()
   public patchUser(@Body() patchUserDto: PatchUserDto) {
-
     return patchUserDto;
   }
 }

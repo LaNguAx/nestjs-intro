@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -63,16 +68,45 @@ export class PostsService {
   }
 
   public async update(patchPostDto: PatchPostDto) {
+    let tags: Tag[] | null = null;
+    let post: PostEntity | null = null;
+
     // find the tags
-    const tags = await this.tagsService.findMultipleTags(
-      patchPostDto.tags || [],
-    );
+    const newPostTags = patchPostDto?.tags || [];
+
+    try {
+      tags = await this.tagsService.findMultipleTags(newPostTags);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later.',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    if (!tags || tags.length !== newPostTags.length) {
+      throw new BadRequestException('Tags do not match', {
+        description: 'Tags do not match',
+      });
+    }
 
     // find the post
-    const post = await this.postsRepository.findOneBy({ id: patchPostDto.id });
+    try {
+      post = await this.postsRepository.findOneBy({ id: patchPostDto.id });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later.',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
 
     if (!post) {
-      throw new NotFoundException('Post not found');
+      throw new NotFoundException('Post not found', {
+        description: 'Post not found',
+      });
     }
 
     // update the post
@@ -88,6 +122,17 @@ export class PostsService {
     post.tags = tags;
 
     // save the post and return
-    return this.postsRepository.save(post);
+    try {
+      post = await this.postsRepository.save(post);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later.',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    return post;
   }
 }

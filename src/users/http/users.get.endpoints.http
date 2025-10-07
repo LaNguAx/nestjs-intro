@@ -1,5 +1,5 @@
 GET http://localhost:3000/users
-GET http://localhost:3000/users/1
+GET http://localhost:3000/users/3
 GET http://localhost:3000/users/124124
 ?limit=10
 &page=20
