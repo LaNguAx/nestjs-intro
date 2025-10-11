@@ -16,6 +16,8 @@ import { PatchPostDto } from '../dtos/patch-post-dto';
 import { GetPostsDto } from '../dtos/get-posts.dto';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
+import { CreatePostProvider } from './create-post.provider';
+import type { ActiveUserData } from 'src/auth/interfaces/active-user.interface';
 
 @Injectable()
 export class PostsService {
@@ -26,31 +28,37 @@ export class PostsService {
     private readonly metaOptionsService: MetaOptionsService,
     private readonly tagsService: TagsService,
     private readonly paginationProvider: PaginationProvider,
+    private readonly createPostProvider: CreatePostProvider,
   ) {}
 
-  public async create(createPostDto: CreatePostDto): Promise<PostEntity> {
-    // Find author from db based on authorId
-    const author = await this.usersService.findOneById(createPostDto.authorId);
+  public async create(
+    createPostDto: CreatePostDto,
+    user: ActiveUserData,
+  ): Promise<PostEntity> {
+    return this.createPostProvider.create(createPostDto, user);
+    // console.log(createPostDto);
+    // // Find author from db based on authorId
+    // const author = await this.usersService.findOneById(createPostDto.authorId);
 
-    // Find tags from db based on tagIds
-    const tags = await this.tagsService.findMultipleTags(
-      createPostDto.tags || [],
-    );
+    // // Find tags from db based on tagIds
+    // const tags = await this.tagsService.findMultipleTags(
+    //   createPostDto.tags || [],
+    // );
 
-    // Create Post
-    const post = author
-      ? this.postsRepository.create({
-          ...createPostDto,
-          author,
-          tags,
-        })
-      : this.postsRepository.create({
-          ...createPostDto,
-          tags,
-        });
+    // // Create Post
+    // const post = author
+    //   ? this.postsRepository.create({
+    //       ...createPostDto,
+    //       author,
+    //       tags,
+    //     })
+    //   : this.postsRepository.create({
+    //       ...createPostDto,
+    //       tags,
+    //     });
 
-    // return the post
-    return this.postsRepository.save(post);
+    // // return the post
+    // return this.postsRepository.save(post);
   }
 
   public async findAll(

@@ -8,20 +8,24 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { GetUsersParamDto } from './dtos/get-users-param.dto';
 import { PatchUserDto } from './dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { WebSocketGateway } from '@nestjs/websockets';
 import { CreateManyUsersDto } from './dtos/create-many-users.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { AuthTypeEnum } from 'src/auth/enums/auth-type.enum';
+import { AuthModeEnum } from 'src/auth/enums/auth-mode.enum';
 
 @Controller('users')
 @ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Auth(AuthModeEnum.ANY, AuthTypeEnum.None)
   @Get('{/:id}')
   @ApiOperation({
     summary: 'Fetches a list of registered users of the application.',
@@ -53,10 +57,14 @@ export class UsersController {
   }
 
   @Post()
-  public createUsers(@Body() createUserDto: CreateUserDto) {
+  // @SetMetadata('authType', 'none')
+  @Auth(AuthModeEnum.ANY, AuthTypeEnum.None)
+  // @Auth(AuthTypeEnum.None)
+  public createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
   }
 
+  // @UseGuards(AccessTokenGuard)
   @Post('create-many')
   public createManyUsers(@Body() createManyUsersDto: CreateManyUsersDto) {
     return this.usersService.createMany(createManyUsersDto);
