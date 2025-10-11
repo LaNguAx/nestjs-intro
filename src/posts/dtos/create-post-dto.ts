@@ -1,6 +1,5 @@
 import {
   IsArray,
-  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -12,6 +11,9 @@ import {
   ValidateNested,
   IsObject,
   IsInt,
+  IsDate,
+  IsEmpty,
+  ValidateIf,
 } from 'class-validator';
 import { PostTypeEnum } from '../enums/post-type.enum';
 import { PostStatusEnum } from '../enums/post-status.enum';
@@ -92,7 +94,7 @@ export class CreatePostDto {
   featuredImageUrl?: string;
 
   @ApiPropertyOptional()
-  @IsDateString()
+  @IsDate({ message: 'publishOn must be an ISO8601 string' })
   @IsOptional()
   // optionally: @Type(() => Date) if you want auto Date conversion
   publishOn?: Date;
@@ -121,11 +123,14 @@ export class CreatePostDto {
   metaOptions?: CreatePostMetaOptionsDto;
 
   @ApiProperty({
-    description: 'The author ID of the post',
-    type: 'integer',
+    description:
+      'The author ID of the post (deprecated — must not be sent anymore)',
+    type: Number,
     example: 1,
+    deprecated: true,
   })
-  @IsInt()
-  @IsNotEmpty()
-  authorId: number;
+  @ValidateIf((_, value) => value !== undefined)
+  @IsEmpty({ message: 'authorId is deprecated and must not be provided.' })
+  /** @deprecated This field is deprecated and must not be provided. */
+  authorId?: number;
 }

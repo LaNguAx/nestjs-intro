@@ -1,6 +1,6 @@
 POST http://localhost:3000/posts
 Content-Type: application/json
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJlbWFpbCI6ImpvaG5hd3Jhd3JAVGVmc2FmYXNmc2Fmc3QuY29tIiwiaWF0IjoxNzYwMTM5NjgxLCJleHAiOjE3NjAxNDMyODEsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.Vf5RpfwbFgMpEhvQIjDP0plVjKKocpHQyP7BrLvXs74
 {
   "title": "What's new with NestJS?",
   "postType": "post",
@@ -10,12 +10,10 @@ Content-Type: application/json
   "schema": { "@context": "https://schema.org", "@type": "Person" },
   "featuredImageUrl": "http://localhost.com/images/image1.jpg",
   "publishOn": "2025-10-03T11:45:36.124Z",
-  "tags": ["nestjs", "typescript"],
   "metaOptions": {
     "metaValue": {
       "sidebarEnabled": false
     }
   },
-  "authorId": 1,
-  "tags": [1,4]
+  "tags": [4,6]
 }  

@@ -18,6 +18,8 @@ import type { ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
 import { UsersCreateManyProvider } from './users-create-many.provider';
 import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
+import { CreateUserProvider } from './create-user.provider';
+import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
 
 /**
  * Service to connect to the Users data source and perform business operations.
@@ -43,6 +45,16 @@ export class UsersService {
      * Inject UsersCreateManyProvider
      */
     private readonly usersCreateManyProvider: UsersCreateManyProvider,
+
+    /**
+     * Inject CreateUserProvider
+     */
+    private readonly createUserProvider: CreateUserProvider,
+
+    /**
+     * Inject FindOneUserByEmailProvider
+     */
+    private readonly findOneByEmailProvider: FindOneUserByEmailProvider,
   ) {}
 
   /**
@@ -52,43 +64,7 @@ export class UsersService {
    * @returns The created user.
    */
   public async createUser(createUserDto: CreateUserDto) {
-    // check if user already exists
-    let existingUser: User | null = null;
-
-    try {
-      existingUser = await this.usersRepository.findOne({
-        where: { email: createUserDto.email },
-      });
-    } catch (error) {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment please try later.',
-        {
-          description: 'Error connecting to the database',
-        },
-      );
-    }
-
-    // handle exception -- for next section
-    if (existingUser) {
-      throw new ConflictException(
-        'The user already exists, please check your email.',
-      );
-    }
-
-    // create a new user
-    let newUser = this.usersRepository.create(createUserDto);
-    try {
-      newUser = await this.usersRepository.save(newUser);
-    } catch (error) {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment please try later.',
-        {
-          description: 'Error connecting to the database',
-        },
-      );
-    }
-
-    return newUser;
+    return await this.createUserProvider.createUser(createUserDto);
   }
 
   /**
@@ -105,25 +81,25 @@ export class UsersService {
     _page: number,
   ) {
     console.log(getUserParamDto);
-    throw new HttpException(
-      {
-        status: HttpStatus.NOT_FOUND,
-        fileName: 'users.service.ts',
-        error: 'The API endpoint does not exist',
-        lineNumber: 88,
-      },
-      HttpStatus.NOT_FOUND,
-      {
-        cause: new Error(),
-        description: 'Occured because the API endpoint was permanently moved.',
-      },
-    );
+    // throw new HttpException(
+    //   {
+    //     status: HttpStatus.MOVED_PERMANENTLY,
+    //     fileName: 'users.service.ts',
+    //     error: 'The API endpoint has been moved permanently',
+    //     lineNumber: 88,
+    //   },
+    //   HttpStatus.MOVED_PERMANENTLY,
+    //   {
+    //     cause: new Error(),
+    //     description: 'Occured because the API endpoint was permanently moved.',
+    //   },
+    // );
 
-    // if (getUserParamDto.id) {
-    //   return this.findOneById(getUserParamDto.id);
-    // }
+    if (getUserParamDto.id) {
+      return this.findOneById(getUserParamDto.id);
+    }
 
-    // return this.usersRepository.find();
+    return this.usersRepository.find();
   }
 
   /**
@@ -156,5 +132,9 @@ export class UsersService {
 
   public async createMany(createManyUsersDto: CreateManyUsersDto) {
     return await this.usersCreateManyProvider.createMany(createManyUsersDto);
+  }
+
+  public async findOneByEmail(email: string) {
+    return await this.findOneByEmailProvider.findOneByEmail(email);
   }
 }

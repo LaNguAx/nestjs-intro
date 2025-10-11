@@ -15,6 +15,8 @@ import { CreatePostDto } from './dtos/create-post-dto';
 import { PatchPostDto } from './dtos/patch-post-dto';
 import { Post as PostEntity } from './post.entity';
 import { GetPostsDto } from './dtos/get-posts.dto';
+import { ActiveUser } from 'src/auth/decorators/active-user-data.decorator';
+import type { ActiveUserData } from 'src/auth/interfaces/active-user.interface';
 
 @Controller('posts')
 @ApiTags('Posts')
@@ -45,8 +47,11 @@ export class PostsController {
     type: CreatePostDto,
   })
   @Post()
-  public createPost(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
-    return this.postsService.create(createPostDto);
+  public createPost(
+    @Body() createPostDto: CreatePostDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.postsService.create(createPostDto, user);
   }
 
   @ApiResponse({
